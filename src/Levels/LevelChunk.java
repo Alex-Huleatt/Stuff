@@ -6,8 +6,6 @@
 
 package Levels;
 
-import Main.Entity;
-import Main.LevelFeature;
 import java.util.ArrayList;
 
 /**
@@ -16,13 +14,15 @@ import java.util.ArrayList;
  */
 public class LevelChunk {
     private final int ID;
-    private final int[] neighbor_IDs;
+    private final byte[] neighbor_IDs;
     
     private ArrayList<LevelFeature> features;
     
-    public LevelChunk(int ID, int[] neighbor_IDs, ArrayList<LevelFeature> features) {
+    public LevelChunk(int ID, byte[] neighbor_IDs, ArrayList<LevelFeature> features) {
         this.ID = ID;
         this.neighbor_IDs = neighbor_IDs;
         this.features = features;   
     }
+    
+    
 }

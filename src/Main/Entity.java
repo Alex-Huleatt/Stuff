@@ -17,6 +17,6 @@ public interface Entity {
     
     public Point getPosition();
     public void update(WorldView wv);
-    public void drawSelf(Graphics g, int size);
+    public void drawSelf(Graphics g, int size, int x_offset, int y_offset);
     
 }

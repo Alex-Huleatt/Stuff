@@ -4,7 +4,9 @@
  * and open the template in the editor.
  */
 
-package Main;
+package Levels;
+
+import Main.Entity;
 
 /**
  *

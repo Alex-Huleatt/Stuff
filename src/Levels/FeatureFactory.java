@@ -4,14 +4,17 @@
  * and open the template in the editor.
  */
 
-package Display;
-
-import javax.swing.JPanel;
+package Levels;
 
 /**
  *
  * @author Alex
  */
-public class Panel extends JPanel {
-    
+public class FeatureFactory {
+    public static LevelFeature makeFeature(byte id, byte x, byte y) {
+        switch (id) {
+            
+        }
+        return null;
+    }
 }
