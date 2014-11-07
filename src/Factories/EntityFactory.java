@@ -4,13 +4,15 @@
  * and open the template in the editor.
  */
 
-package Main;
+package Factories;
+
+import Main.Entity;
 
 /**
  *
  * @author Alex
  */
-public final class Factory {
+public final class EntityFactory {
     public static Entity make(String type) {
         switch (type) {
             //Insert types here

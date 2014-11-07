@@ -6,6 +6,7 @@
 
 package Levels;
 
+import Factories.FeatureFactory;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
@@ -18,18 +19,19 @@ import java.util.logging.Logger;
  * @author Alex
  */
 public class LevelLoader {
-    private LevelCache cached;
-    private byte[] chunk_sizes;
+    private final LevelCache cached;
+    private final byte[] chunk_sizes;
     private final RandomAccessFile raf;
     public LevelLoader(int level) throws FileNotFoundException, IOException {
         raf = new RandomAccessFile(level + ".lvl", "r"); //create a new reader
-        int num_chunks = raf.readByte(); //first byte of file is number of level chunks
+        int num_chunks = raf.readByte(); //first byte of file is first 8 bits of number of level chunks
         num_chunks <<= 8;
-        num_chunks = num_chunks | raf.readByte();
+        num_chunks = num_chunks | raf.readByte(); //second byte is second 8 bits of number of level chunks
         chunk_sizes = new byte[num_chunks]; //create a new array for chunk-sizes
         for (byte i = 0; i < num_chunks; i++) { //for num_chunks, scan in the number of bytes for each chunk
             chunk_sizes[i] = raf.readByte();
         }
+        cached = new LevelCache(75);
     }
     
     public LevelChunk getChunk(int id) {
@@ -78,7 +80,7 @@ public class LevelLoader {
             feat.add(FeatureFactory.makeFeature(arr[index],arr[index+1],arr[index+2]));
         }
         
-        return null;
+        return feat;
     }
     
 }

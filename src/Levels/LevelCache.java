@@ -41,6 +41,7 @@ public class LevelCache {
         if (len < cap) {
             cache.put(ID, lc);
             prio.put(ID, 0);
+            len++;
         } else {
             int max = 0;
             for (Integer i : prio.keySet()) {

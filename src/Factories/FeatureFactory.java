@@ -4,7 +4,9 @@
  * and open the template in the editor.
  */
 
-package Levels;
+package Factories;
+
+import Levels.LevelFeature;
 
 /**
  *

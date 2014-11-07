@@ -7,6 +7,7 @@
 package Levels;
 
 import java.util.ArrayList;
+import struct.Point;
 
 /**
  * Represents a discrete portion of a level.
@@ -15,7 +16,7 @@ import java.util.ArrayList;
 public class LevelChunk {
     private final int ID;
     private final byte[] neighbor_IDs;
-    
+    private Point posn;
     private ArrayList<LevelFeature> features;
     
     public LevelChunk(int ID, byte[] neighbor_IDs, ArrayList<LevelFeature> features) {
