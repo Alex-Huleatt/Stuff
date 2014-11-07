@@ -21,10 +21,11 @@ public class LevelLoader {
     private LevelCache cached;
     private byte[] chunk_sizes;
     private final RandomAccessFile raf;
-    
     public LevelLoader(int level) throws FileNotFoundException, IOException {
         raf = new RandomAccessFile(level + ".lvl", "r"); //create a new reader
-        byte num_chunks = raf.readByte(); //first byte of file is number of level chunks
+        int num_chunks = raf.readByte(); //first byte of file is number of level chunks
+        num_chunks <<= 8;
+        num_chunks = num_chunks | raf.readByte();
         chunk_sizes = new byte[num_chunks]; //create a new array for chunk-sizes
         for (byte i = 0; i < num_chunks; i++) { //for num_chunks, scan in the number of bytes for each chunk
             chunk_sizes[i] = raf.readByte();
@@ -62,7 +63,7 @@ public class LevelLoader {
     }
     
     private int offset(int id) {
-        int off = 1 + chunk_sizes.length; //skip header bytes
+        int off = 2 + chunk_sizes.length; //skip header bytes
         for (int i = 0; i < id; i++) {
             off += chunk_sizes[i] + 4; //+4 for each neighbor
         }
@@ -70,7 +71,12 @@ public class LevelLoader {
     }
     
     private ArrayList<LevelFeature> getFeatures(byte[] arr) {
-        
+        if (arr.length % 3 != 0) System.out.println("Level format wrong.");
+        ArrayList<LevelFeature> feat = new ArrayList<>();
+        for (int i = 0; i < arr.length/3; i++) {
+            int index = i * 3;
+            feat.add(FeatureFactory.makeFeature(arr[index],arr[index+1],arr[index+2]));
+        }
         
         return null;
     }

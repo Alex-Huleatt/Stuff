@@ -15,9 +15,13 @@ import java.util.HashMap;
 public class LevelCache {
     private HashMap<Integer,LevelChunk> cache;
     private HashMap<Integer, Integer> prio;
-    public LevelCache() {
+    private int cap;
+    private int len;
+    public LevelCache(int cap) {
         this.cache = new HashMap<>();
         this.prio = new HashMap<>();
+        this.cap = cap;
+        this.len = 0;
     }
     
     
@@ -26,11 +30,29 @@ public class LevelCache {
     }
     
     public LevelChunk get(int ID) {
+        for (Integer i : cache.keySet()) {
+            prio.put(i, prio.get(i)+1);
+        }
+        prio.put(ID,0);
         return cache.get(ID);
     }
     
     public void add(int ID, LevelChunk lc) {
-        
+        if (len < cap) {
+            cache.put(ID, lc);
+            prio.put(ID, 0);
+        } else {
+            int max = 0;
+            for (Integer i : prio.keySet()) {
+                if (prio.get(i) > prio.get(max)) {
+                    max = i;
+                }
+            }
+            cache.remove(max);
+            prio.remove(max);
+            cache.put(ID, lc);
+            prio.put(ID,0);
+        }
     }
     
 }
