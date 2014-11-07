@@ -3,7 +3,6 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package Levels;
 
 import Factories.FeatureFactory;
@@ -19,38 +18,44 @@ import java.util.logging.Logger;
  * @author Alex
  */
 public class LevelLoader {
+
     private final LevelCache cached;
-    private final byte[] chunk_sizes;
+    private final byte[] feature_count;
     private final RandomAccessFile raf;
+
     public LevelLoader(int level) throws FileNotFoundException, IOException {
         raf = new RandomAccessFile(level + ".lvl", "r"); //create a new reader
         int num_chunks = raf.readByte(); //first byte of file is first 8 bits of number of level chunks
         num_chunks <<= 8;
         num_chunks = num_chunks | raf.readByte(); //second byte is second 8 bits of number of level chunks
-        chunk_sizes = new byte[num_chunks]; //create a new array for chunk-sizes
+        feature_count = new byte[num_chunks]; //create a new array for chunk-sizes
         for (byte i = 0; i < num_chunks; i++) { //for num_chunks, scan in the number of bytes for each chunk
-            chunk_sizes[i] = raf.readByte();
+            feature_count[i] = raf.readByte();
         }
         cached = new LevelCache(75);
     }
-    
+
     public LevelChunk getChunk(int id) {
-        if (cached.contains(id)) return cached.get(id);
-        else {
+        if (cached.contains(id)) {
+            return cached.get(id);
+        } else {
             LevelChunk loaded = load(id);
             cached.add(id, loaded);
             return loaded;
         }
     }
-    
+
     private LevelChunk load(int id) {
         int off = offset(id);
         try {
             raf.seek(off);
-            byte[] feat = new byte[chunk_sizes[id]];
-            byte[] neighbor_IDs = new byte[4];
-            for (int i = 0; i < 4; i++) {
-                neighbor_IDs[i] = raf.readByte();
+            byte[] feat = new byte[feature_count[id]];
+            int[] neighbor_IDs = new int[8];
+            for (int i = 0; i < 8; i++) {
+                int nid = ((int) raf.readByte()) << 8;
+                nid |= raf.readByte();
+                neighbor_IDs[i] = nid;
+                
             }
             for (int i = 0; i < feat.length; i++) {
                 feat[i] = raf.readByte();
@@ -58,29 +63,36 @@ public class LevelLoader {
             return new LevelChunk(id, neighbor_IDs, getFeatures(feat));
         } catch (IOException ex) {
             Logger.getLogger(LevelLoader.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
         }
-        
-        
-        return null;
     }
-    
+
     private int offset(int id) {
-        int off = 2 + chunk_sizes.length; //skip header bytes
+        int off = 2 + feature_count.length; //skip header bytes
         for (int i = 0; i < id; i++) {
-            off += chunk_sizes[i] + 4; //+4 for each neighbor
+            off += feature_count[i]*5 + 16; //+8 = 1 for each neighbor
         }
         return off;
     }
-    
+
     private ArrayList<LevelFeature> getFeatures(byte[] arr) {
-        if (arr.length % 3 != 0) System.out.println("Level format wrong.");
-        ArrayList<LevelFeature> feat = new ArrayList<>();
-        for (int i = 0; i < arr.length/3; i++) {
-            int index = i * 3;
-            feat.add(FeatureFactory.makeFeature(arr[index],arr[index+1],arr[index+2]));
+        if (arr.length % 5 != 0) {
+            System.out.println("Level format wrong.");
         }
-        
+        ArrayList<LevelFeature> feat = new ArrayList<>();
+        for (int i = 0; i < arr.length / 5; i++) {
+            int index = i * 5;
+            byte feat_id = arr[index];
+            int x = arr[index + 1];
+            x <<= 8;
+            x |= arr[index + 2];
+            int y = arr[index + 3];
+            y <<= 8;
+            y |= arr[index + 4];
+            feat.add(FeatureFactory.makeFeature(feat_id, x, y));
+        }
+
         return feat;
     }
-    
+
 }

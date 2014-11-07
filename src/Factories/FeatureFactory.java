@@ -13,7 +13,7 @@ import Levels.LevelFeature;
  * @author Alex
  */
 public class FeatureFactory {
-    public static LevelFeature makeFeature(byte id, byte x, byte y) {
+    public static LevelFeature makeFeature(byte id, int x, int y) {
         switch (id) {
             
         }

@@ -15,11 +15,11 @@ import struct.Point;
  */
 public class LevelChunk {
     private final int ID;
-    private final byte[] neighbor_IDs;
+    private final int[] neighbor_IDs;
     private Point posn;
     private ArrayList<LevelFeature> features;
     
-    public LevelChunk(int ID, byte[] neighbor_IDs, ArrayList<LevelFeature> features) {
+    public LevelChunk(int ID, int[] neighbor_IDs, ArrayList<LevelFeature> features) {
         this.ID = ID;
         this.neighbor_IDs = neighbor_IDs;
         this.features = features;   
